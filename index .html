@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muscle Tycoon Pro 💪</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #0084ff;
+            --primary-light: #e6f2ff;
+            --secondary: #25d366;
+            --accent: #ff6b6b;
+            --text: #333;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #999;
+            --white: #ffffff;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: var(--text);
+            overflow-x: hidden;
+            padding-bottom: 70px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .page {
+            display: none;
+            padding: 15px;
+            min-height: calc(100vh - 70px);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--medium-gray);
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-align: center;
+        }
+        
+        /* XP Progress Bar */
+        .xp-container {
+            margin: 20px 0;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .level-rank {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: var(--medium-gray);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 0%;
+            transition: var(--transition);
+        }
+        
+        .xp-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        /* Tap Button */
+        .tap-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .tap-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, var(--primary), #0066cc);
+            border: none;
+            color: white;
+            font-size: 4rem;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,132,255,0.4);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .tap-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(0,132,255,0.4);
+        }
+        
+        .xp-gain {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-top: 10px;
+            height: 30px;
+            transition: all 0.3s;
+        }
+        
+        .power-info {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .power-info span {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        /* Bottom Nav */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            display: flex;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+            z-index: 100;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .nav-btn.active {
+            color: var(--primary);
+        }
+        
+        .nav-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        /* Store & Trainers */
+        .store-container, .trainers-container {
+            margin-top: 20px;
+        }
+        
+        .xp-display {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+            min-height: 40px;
+        }
+        
+        .card-cost {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .buy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+        
+        .buy-btn:hover {
+            background: #0066cc;
+            transform: scale(1.05);
+        }
+        
+        .buy-btn:disabled {
+            background: var(--dark-gray);
+            cursor: not-allowed;
+        }
+        
+        .save-notice {
+            text-align: center;
+            background: var(--secondary);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeInOut 3s ease;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        /* Leaderboard */
+        .leaderboard-list {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+        
+        .leader-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--medium-gray);
+            transition: background 0.3s;
+        }
+        
+        .leader-item:hover {
+            background: var(--primary-light);
+        }
+        
+        .leader-item:last-child {
+            border-bottom: none;
+        }
+        
+        .leader-rank {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .leader-rank.top-1 {
+            background: linear-gradient(135deg, gold, #ffd700);
+            color: #333;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .leader-rank.top-2 {
+            background: linear-gradient(135deg, silver, #c0c0c0);
+            color: #333;
+        }
+        
+        .leader-rank.top-3 {
+            background: linear-gradient(135deg, #cd7f32, #a56a2b);
+            color: white;
+        }
+        
+        .leader-info {
+            flex: 1;
+        }
+        
+        .leader-name {
+            font-weight: 600;
+        }
+        
+        .leader-xp {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .leader-item.you {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+        }
+        
+        /* Profile */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .avatar {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+        
+        .username {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .inventory-title {
+            font-weight: 600;
+            margin: 20px 0 10px;
+            padding-left: 10px;
+            color: var(--primary);
+        }
+        
+        /* Achievements */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .badge {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            opacity: 0.4;
+            transition: all 0.3s;
+        }
+        
+        .badge.unlocked {
+            opacity: 1;
+            border: 2px solid var(--secondary);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .badge-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .badge-desc {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.7);
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        /* Save/Load buttons */
+        .save-load-container {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .save-btn, .load-btn, .reset-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .save-btn:hover, .load-btn:hover, .reset-btn:hover {
+            background: #0066cc;
+        }
+        
+        .reset-btn {
+            background: var(--accent);
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .page {
+                padding: 20px;
+            }
+            
+            .tap-btn {
+                width: 200px;
+                height: 200px;
+                font-size: 5rem;
+            }
+            
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Tab Active Indicator */
+        .tab-active-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tab-active-indicator i {
+            margin-right: 5px;
+        }
+        
+        .tab-active-indicator.inactive {
+            background: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Save/Load Buttons -->
+    <div class="save-load-container">
+        <button class="save-btn" id="saveBtn"><i class="fas fa-save"></i> Save</button>
+        <button class="load-btn" id="loadBtn"><i class="fas fa-folder-open"></i> Load</button>
+        <button class="reset-btn" id="resetBtn"><i class="fas fa-trash"></i> Reset</button>
+    </div>
+    
+    <!-- Tab Active Indicator -->
+    <div class="tab-active-indicator" id="tabIndicator">
+        <i class="fas fa-check-circle"></i> Active
+    </div>
+    
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <div class="header">
+            <h1 class="page-title">Muscle Tycoon Pro 💪</h1>
+        </div>
+        
+        <div class="xp-container">
+            <div class="level-rank">
+                <span class="level">Level <span id="level">1</span></span>
+                <span class="rank" id="rank">Newbie</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="xp-progress"></div>
+            </div>
+            <div class="xp-info">
+                <span id="current-xp">0</span>
+                <span id="next-level-xp">100</span>
+            </div>
+        </div>
+        
+        <div class="tap-container">
+            <button class="tap-btn" id="tap-btn">💪</button>
+            <div class="xp-gain" id="xp-gain"></div>
+            <div class="power-info">
+                <p>Your Tap Power: <span id="tap-power">x1</span></p>
+                <p>Auto XP/sec: <span id="auto-xp">0</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Store Page -->
+    <div id="store" class="page">
+        <div class="header">
+            <button class="back-btn" onclick="showPage('home')">←</button>
+            <h2 class="page-title">Muscle Store</h2>
+            <div class="xp-display">XP: <span id="store-xp">0</span></div>
+        </div>
+        
+        <div class="store-container">
+            <div class="card-grid" id="store-items">
+                <!-- Items will be generated dynamically -->
+            </div>
+            
+            <div class="save-notice" id="save-notice">Item Purchased & Saved!</div>
+        </div>
+    </div>
+    
+    <!-- Trainers Page -->
+    <div id="trainers" class="page">
+        <div class="header">
+            <button class="back-btn" onclick="showPage('home')">←</button>
+            <h2 class="page-title">Hire Trainers</h2>
+            <div class="xp-display">Auto XP: <span id="trainer-auto-xp">0</span>/sec</div>
+        </div>
+        
+        <div class="trainers-container">
+            <div class="card-grid" id="trainer-cards">
+                <!-- Trainers will be generated dynamically -->
+            </div>
+            
+            <div class="xp-timer">
+                <p class="xp-added" id="xp-added">+0 XP Added</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leaderboard Page -->
+    <div id="leaderboard" class="page">
+        <div class="header">
+            <button class="back-btn" onclick="showPage('home')">←</button>
+            <h2 class="page-title">🏆 Top Bodybuilders</h2>
+        </div>
+        
+        <div class="leaderboard-list" id="leaderboard-list">
+            <!-- Leaderboard will be generated dynamically -->
+        </div>
+    </div>
+    
+    <!-- Profile Page -->
+    <div id="profile" class="page">
+        <div class="header">
+            <button class="back-btn" onclick="showPage('home')">←</button>
+            <h2 class="page-title">Your Profile</h2>
+        </div>
+        
+        <div class="profile-header">
+            <div class="avatar" id="user-avatar">💪</div>
+            <div class="username" id="username">Player</div>
+            <div class="rank" id="profile-rank">Newbie</div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-xp">0</div>
+                <div class="stat-label">Total XP</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="profile-level">1</div>
+                <div class="stat-label">Level</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="profile-tap-power">x1</div>
+                <div class="stat-label">Tap Power</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" id="profile-auto-xp">0</div>
+                <div class="stat-label">Auto XP/sec</div>
+            </div>
+        </div>
+        
+        <div class="inventory-title">Your Gear</div>
+        <div class="card-grid" id="gear-inventory">
+            <!-- Gear inventory will be generated dynamically -->
+        </div>
+        
+        <div class="inventory-title">Your Trainers</div>
+        <div class="card-grid" id="trainer-inventory">
+            <!-- Trainer inventory will be generated dynamically -->
+        </div>
+    </div>
+    
+    <!-- Achievements Page -->
+    <div id="achievements" class="page">
+        <div class="header">
+            <button class="back-btn" onclick="showPage('home')">←</button>
+            <h2 class="page-title">🏅 Achievements</h2>
+        </div>
+        
+        <div class="badge-grid" id="achievements-grid">
+            <!-- Achievements will be generated dynamically -->
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <button class="nav-btn active" onclick="showPage('home')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('store')">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Store</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('trainers')">
+            <i class="fas fa-dumbbell"></i>
+            <span>Trainers</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('leaderboard')">
+            <i class="fas fa-trophy"></i>
+            <span>Leaderboard</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('profile')">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('achievements')">
+            <i class="fas fa-medal"></i>
+            <span>Achievements</span>
+        </button>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // Game data
+        const gearItems = [
+            { id: 'proteinShake', name: 'Protein Shake', icon: '🥤', cost: 50, xpBoost: 2, maxLevel: 3 },
+            { id: 'energyDrink', name: 'Energy Drink', icon: '⚡', cost: 120, xpBoost: 5, maxLevel: 5 },
+            { id: 'creatine', name: 'Creatine', icon: '💊', cost: 200, xpBoost: 2, maxLevel: 1 },
+            { id: 'liftingGloves', name: 'Lifting Gloves', icon: '🧤', cost: 100, xpBoost: 3, maxLevel: 2 }
+        ];
+        
+        const trainers = [
+            { id: 'coachRaju', name: 'Coach Raju', icon: '👨‍🏫', cost: 200, xpPerSec: 5, maxLevel: 5 },
+            { id: 'trainerMaya', name: 'Trainer Maya', icon: '👩‍🏫', cost: 1000, xpPerSec: 10, maxLevel: 5 },
+            { id: 'guruSingh', name: 'Guru Singh', icon: '👨‍💼', cost: 5000, xpPerSec: 25, maxLevel: 5 }
+        ];
+        
+        const achievements = [
+            { id: 'newbie', name: 'Newbie', icon: '👶', desc: 'Reach Level 5', condition: (state) => state.level >= 5 },
+            { id: '100taps', name: '100 Taps', icon: '💯', desc: 'Tap 100 times', condition: (state) => state.taps >= 100 },
+            { id: 'champion', name: 'Champion', icon: '🏆', desc: 'Reach Level 25', condition: (state) => state.level >= 25 },
+            { id: 'rich', name: 'Rich Tycoon', icon: '💰', desc: 'Earn 50,000 XP', condition: (state) => state.totalXP >= 50000 },
+            { id: 'king', name: 'King of Gains', icon: '👑', desc: 'Hire 5 trainers', condition: (state) => state.trainers.length >= 5 },
+            { id: 'power', name: 'Power Up', icon: '⚡', desc: 'Upgrade gear 10 times', condition: (state) => state.gear.reduce((sum, item) => sum + (item.level - 1), 0) >= 10 }
+        ];
+        
+        // Game state - starts fresh every time
+        let gameState = {
+            username: "Player",
+            level: 1,
+            totalXP: 0,
+            currentXP: 0,
+            nextLevelXP: 100,
+            rank: "Newbie",
+            tapPower: 1,
+            autoXP: 0,
+            gear: [],
+            trainers: [],
+            achievements: {},
+            taps: 0
+        };
+        
+        // Tab visibility variables
+        let isTabActive = true;
+        let autoXpInterval = null;
+        
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Set active nav button
+            const navBtns = document.querySelectorAll('.nav-btn');
+            switch(pageId) {
+                case 'home': navBtns[0].classList.add('active'); break;
+                case 'store': 
+                    navBtns[1].classList.add('active'); 
+                    updateStoreUI();
+                    break;
+                case 'trainers': 
+                    navBtns[2].classList.add('active'); 
+                    updateTrainersUI();
+                    break;
+                case 'leaderboard': 
+                    navBtns[3].classList.add('active'); 
+                    updateLeaderboard();
+                    break;
+                case 'profile': 
+                    navBtns[4].classList.add('active'); 
+                    updateProfile();
+                    break;
+                case 'achievements': 
+                    navBtns[5].classList.add('active'); 
+                    updateAchievements();
+                    break;
+            }
+            
+            // Update XP displays
+            updateXPDisplays();
+        }
+        
+        // Update XP displays
+        function updateXPDisplays() {
+            document.getElementById('current-xp').textContent = gameState.currentXP.toLocaleString();
+            document.getElementById('next-level-xp').textContent = gameState.nextLevelXP.toLocaleString();
+            document.getElementById('store-xp').textContent = gameState.totalXP.toLocaleString();
+            document.getElementById('tap-power').textContent = 'x' + gameState.tapPower;
+            document.getElementById('auto-xp').textContent = gameState.autoXP;
+            document.getElementById('trainer-auto-xp').textContent = gameState.autoXP;
+            document.getElementById('total-xp').textContent = gameState.totalXP.toLocaleString();
+            document.getElementById('profile-level').textContent = gameState.level;
+            document.getElementById('profile-tap-power').textContent = 'x' + gameState.tapPower;
+            document.getElementById('profile-auto-xp').textContent = gameState.autoXP;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('rank').textContent = gameState.rank;
+            document.getElementById('profile-rank').textContent = gameState.rank;
+            document.getElementById('username').textContent = gameState.username;
+            
+            // Update progress bar
+            const progressPercent = (gameState.currentXP / gameState.nextLevelXP) * 100;
+            document.getElementById('xp-progress').style.width = Math.min(progressPercent, 100) + '%';
+        }
+        
+        // Gain XP function
+        function gainXP() {
+            if (!isTabActive) return;
+            
+            // Add XP
+            const xpGain = gameState.tapPower;
+            gameState.currentXP += xpGain;
+            gameState.totalXP += xpGain;
+            gameState.taps++;
+            
+            // Check for level up
+            checkLevelUp();
+            
+            // Show XP gain animation
+            const xpGainElement = document.getElementById('xp-gain');
+            xpGainElement.textContent = '+' + xpGain + ' XP';
+            xpGainElement.style.opacity = '1';
+            
+            setTimeout(() => {
+                xpGainElement.style.opacity = '0';
+            }, 1000);
+            
+            // Update displays
+            updateXPDisplays();
+            
+            // Check achievements
+            checkAchievements();
+            
+            // Save game
+            saveGame();
+        }
+        
+        // Check for level up
+        function checkLevelUp() {
+            if (gameState.currentXP >= gameState.nextLevelXP) {
+                gameState.level++;
+                gameState.currentXP = gameState.currentXP - gameState.nextLevelXP;
+                gameState.nextLevelXP = Math.round(gameState.nextLevelXP * 1.5);
+                
+                // Update rank based on level
+                if (gameState.level >= 20) gameState.rank = "Bronze Hulk";
+                else if (gameState.level >= 15) gameState.rank = "Iron Titan";
+                else if (gameState.level >= 10) gameState.rank = "Steel Warrior";
+                else gameState.rank = "Newbie";
+                
+                // Show level up effect
+                showToast("Level Up! You're now Level " + gameState.level);
+                document.querySelector('.tap-btn').classList.add('pulse');
+                setTimeout(() => {
+                    document.querySelector('.tap-btn').classList.remove('pulse');
+                }, 500);
+                
+                // Update displays
+                updateXPDisplays();
+                
+                // Save game
+                saveGame();
+            }
+        }
+        
+        // Check achievements
+        function checkAchievements() {
+            achievements.forEach(achievement => {
+                if (!gameState.achievements[achievement.id] && achievement.condition(gameState)) {
+                    gameState.achievements[achievement.id] = true;
+                    showToast("Achievement Unlocked: " + achievement.name + "!");
+                    updateAchievements();
+                    
+                    // Save game
+                    saveGame();
+                }
+            });
+        }
+        
+        // Auto XP function
+        function autoGainXP() {
+            if (!isTabActive) return;
+            
+            if (gameState.autoXP > 0) {
+                gameState.currentXP += gameState.autoXP;
+                gameState.totalXP += gameState.autoXP;
+                
+                // Show XP added animation
+                const xpAdded = document.getElementById('xp-added');
+                xpAdded.textContent = "+" + gameState.autoXP + " XP";
+                xpAdded.style.opacity = '1';
+                
+                setTimeout(() => {
+                    xpAdded.style.opacity = '0';
+                }, 900);
+                
+                checkLevelUp();
+                updateXPDisplays();
+                
+                // Save every 10 seconds
+                if (Date.now() - lastSaveTime > 10000) {
+                    saveGame();
+                    lastSaveTime = Date.now();
+                }
+            }
+        }
+        
+        // Buy gear item
+        function buyGear(gearId) {
+            if (!isTabActive) return;
+            
+            const gear = gearItems.find(g => g.id === gearId);
+            if (!gear) return;
+            
+            // Check if already owned
+            let gearItem = gameState.gear.find(g => g.id === gearId);
+            let currentLevel = gearItem ? gearItem.level : 0;
+            
+            if (currentLevel >= gear.maxLevel) {
+                showToast("Max level reached for " + gear.name);
+                return;
+            }
+            
+            // Calculate cost
+            const cost = gear.cost * (currentLevel + 1);
+            
+            if (gameState.totalXP < cost) {
+                showToast("Not enough XP!");
+                return;
+            }
+            
+            // Deduct cost
+            gameState.totalXP -= cost;
+            
+            if (gearItem) {
+                gearItem.level++;
+            } else {
+                gameState.gear.push({ id: gearId, level: 1 });
+            }
+            
+            // Recalculate tap power
+            recalculateTapPower();
+            
+            // Update UI and save
+            updateStoreUI();
+            updateXPDisplays();
+            showToast(gear.name + " purchased!");
+            
+            // Save game
+            saveGame();
+            
+            // Show save notice
+            const saveNotice = document.getElementById('save-notice');
+            saveNotice.style.display = 'block';
+            setTimeout(() => {
+                saveNotice.style.display = 'none';
+            }, 2000);
+        }
+        
+        // Hire trainer
+        function hireTrainer(trainerId) {
+            if (!isTabActive) return;
+            
+            const trainer = trainers.find(t => t.id === trainerId);
+            if (!trainer) return;
+            
+            // Check if already hired
+            let trainerItem = gameState.trainers.find(t => t.id === trainerId);
+            let currentLevel = trainerItem ? trainerItem.level : 0;
+            
+            if (currentLevel >= trainer.maxLevel) {
+                showToast("Max level reached for " + trainer.name);
+                return;
+            }
+            
+            // Calculate cost
+            const cost = trainer.cost * (currentLevel + 1);
+            
+            if (gameState.totalXP < cost) {
+                showToast("Not enough XP!");
+                return;
+            }
+            
+            // Deduct cost
+            gameState.totalXP -= cost;
+            
+            if (trainerItem) {
+                trainerItem.level++;
+            } else {
+                gameState.trainers.push({ id: trainerId, level: 1 });
+            }
+            
+            // Recalculate auto XP
+            recalculateAutoXP();
+            
+            // Update UI and save
+            updateTrainersUI();
+            updateXPDisplays();
+            showToast(trainer.name + " hired!");
+            
+            // Save game
+            saveGame();
+        }
+        
+        // Recalculate tap power
+        function recalculateTapPower() {
+            let power = 1;
+            gameState.gear.forEach(gear => {
+                const item = gearItems.find(g => g.id === gear.id);
+                if (item) {
+                    power += item.xpBoost * gear.level;
+                }
+            });
+            gameState.tapPower = power;
+        }
+        
+        // Recalculate auto XP
+        function recalculateAutoXP() {
+            let xp = 0;
+            gameState.trainers.forEach(trainer => {
+                const t = trainers.find(tr => tr.id === trainer.id);
+                if (t) {
+                    xp += t.xpPerSec * trainer.level;
+                }
+            });
+            gameState.autoXP = xp;
+        }
+        
+        // Update store UI
+        function updateStoreUI() {
+            const container = document.getElementById('store-items');
+            container.innerHTML = '';
+            
+            gearItems.forEach(gear => {
+                const owned = gameState.gear.find(g => g.id === gear.id);
+                const currentLevel = owned ? owned.level : 0;
+                const nextLevel = currentLevel + 1;
+                const cost = gear.cost * nextLevel;
+                const disabled = currentLevel >= gear.maxLevel || gameState.totalXP < cost;
+                
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-icon">${gear.icon}</div>
+                    <div class="card-title">${gear.name}</div>
+                    <div class="card-desc">+${gear.xpBoost} XP per tap per level</div>
+                    <div class="card-level">Level ${currentLevel}/${gear.maxLevel}</div>
+                    <div class="card-cost">Cost: ${cost} XP</div>
+                    <button class="buy-btn" ${disabled ? 'disabled' : ''}>
+                        ${currentLevel > 0 ? 'Upgrade' : 'Buy'}
+                    </button>
+                `;
+                
+                const btn = card.querySelector('.buy-btn');
+                btn.addEventListener('click', () => buyGear(gear.id));
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Update trainers UI
+        function updateTrainersUI() {
+            const container = document.getElementById('trainer-cards');
+            container.innerHTML = '';
+            
+            trainers.forEach(trainer => {
+                const hired = gameState.trainers.find(t => t.id === trainer.id);
+                const currentLevel = hired ? hired.level : 0;
+                const nextLevel = currentLevel + 1;
+                const cost = trainer.cost * nextLevel;
+                const disabled = currentLevel >= trainer.maxLevel || gameState.totalXP < cost;
+                
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-icon">${trainer.icon}</div>
+                    <div class="card-title">${trainer.name}</div>
+                    <div class="card-desc">+${trainer.xpPerSec} XP per second per level</div>
+                    <div class="card-level">Level ${currentLevel}/${trainer.maxLevel}</div>
+                    <div class="card-cost">Cost: ${cost} XP</div>
+                    <button class="buy-btn" ${disabled ? 'disabled' : ''}>
+                        ${currentLevel > 0 ? 'Upgrade' : 'Hire'}
+                    </button>
+                `;
+                
+                const btn = card.querySelector('.buy-btn');
+                btn.addEventListener('click', () => hireTrainer(trainer.id));
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Update leaderboard
+        function updateLeaderboard() {
+            const container = document.getElementById('leaderboard-list');
+            container.innerHTML = '';
+            
+            // In a real game, this would come from a server
+            const leaderData = [
+                { name: "Hulk", xp: 98450 },
+                { name: "Thor", xp: 87210 },
+                { name: "Hercules", xp: 75600 },
+                { name: "Achilles", xp: 64320 },
+                { name: "Obito", xp: gameState.totalXP },
+                { name: "Rocky", xp: 42100 },
+                { name: "Arnold", xp: 38950 },
+                { name: "Dwayne", xp: 35600 },
+                { name: "Bruce", xp: 32100 },
+                { name: "Wolverine", xp: 29850 }
+            ];
+            
+            // Sort by XP
+            leaderData.sort((a, b) => b.xp - a.xp);
+            
+            // Add to leaderboard
+            leaderData.forEach((player, index) => {
+                const isYou = player.name === "Obito";
+                
+                const item = document.createElement('div');
+                item.className = `leader-item ${isYou ? 'you' : ''}`;
+                item.innerHTML = `
+                    <div class="leader-rank ${index < 3 ? `top-${index+1}` : ''}">${index+1}</div>
+                    <div class="leader-info">
+                        <div class="leader-name">${player.name} ${isYou ? '(YOU)' : ''}</div>
+                        <div class="leader-xp">${player.xp.toLocaleString()} XP</div>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+        
+        // Update profile
+        function updateProfile() {
+            // Gear inventory
+            const gearContainer = document.getElementById('gear-inventory');
+            gearContainer.innerHTML = '';
+            
+            if (gameState.gear.length === 0) {
+                gearContainer.innerHTML = '<p style="text-align:center; padding:20px; color:var(--dark-gray)">No gear purchased yet</p>';
+            } else {
+                gameState.gear.forEach(gear => {
+                    const item = gearItems.find(g => g.id === gear.id);
+                    if (item) {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `
+                            <div class="card-icon">${item.icon}</div>
+                            <div class="card-title">${item.name}</div>
+                            <div class="card-level">Level ${gear.level}</div>
+                        `;
+                        gearContainer.appendChild(card);
+                    }
+                });
+            }
+            
+            // Trainer inventory
+            const trainerContainer = document.getElementById('trainer-inventory');
+            trainerContainer.innerHTML = '';
+            
+            if (gameState.trainers.length === 0) {
+                trainerContainer.innerHTML = '<p style="text-align:center; padding:20px; color:var(--dark-gray)">No trainers hired yet</p>';
+            } else {
+                gameState.trainers.forEach(trainer => {
+                    const t = trainers.find(tr => tr.id === trainer.id);
+                    if (t) {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `
+                            <div class="card-icon">${t.icon}</div>
+                            <div class="card-title">${t.name}</div>
+                            <div class="card-level">Level ${trainer.level}</div>
+                        `;
+                        trainerContainer.appendChild(card);
+                    }
+                });
+            }
+        }
+        
+        // Update achievements
+        function updateAchievements() {
+            const container = document.getElementById('achievements-grid');
+            container.innerHTML = '';
+            
+            achievements.forEach(achievement => {
+                const unlocked = gameState.achievements[achievement.id];
+                
+                const badge = document.createElement('div');
+                badge.className = `badge ${unlocked ? 'unlocked' : ''}`;
+                badge.innerHTML = `
+                    <div class="badge-icon">${achievement.icon}</div>
+                    <div class="badge-name">${achievement.name}</div>
+                    <div class="badge-desc">${achievement.desc}</div>
+                `;
+                
+                container.appendChild(badge);
+            });
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+        
+        // Tab visibility management
+        function handleVisibilityChange() {
+            const indicator = document.getElementById('tabIndicator');
+            if (document.hidden) {
+                isTabActive = false;
+                indicator.textContent = "Inactive";
+                indicator.className = "tab-active-indicator inactive";
+                indicator.innerHTML = '<i class="fas fa-times-circle"></i> Inactive';
+                if (autoXpInterval) {
+                    clearInterval(autoXpInterval);
+                    autoXpInterval = null;
+                }
+            } else {
+                isTabActive = true;
+                indicator.textContent = "Active";
+                indicator.className = "tab-active-indicator";
+                indicator.innerHTML = '<i class="fas fa-check-circle"></i> Active';
+                if (!autoXpInterval) {
+                    autoXpInterval = setInterval(autoGainXP, 1000);
+                }
+            }
+        }
+        
+        // Save game state to localStorage
+        function saveGame() {
+            try {
+                localStorage.setItem('muscleTycoonSave', JSON.stringify(gameState));
+                showToast("Game saved successfully!");
+            } catch (e) {
+                showToast("Error saving game: " + e.message);
+            }
+        }
+        
+        // Load game state from localStorage
+        function loadGame() {
+            try {
+                const savedData = localStorage.getItem('muscleTycoonSave');
+                if (savedData) {
+                    const savedState = JSON.parse(savedData);
+                    
+                    // Validate the loaded data
+                    if (savedState && savedState.level && savedState.totalXP !== undefined) {
+                        gameState = savedState;
+                        recalculateTapPower();
+                        recalculateAutoXP();
+                        updateXPDisplays();
+                        updateStoreUI();
+                        updateTrainersUI();
+                        updateLeaderboard();
+                        updateProfile();
+                        updateAchievements();
+                        showToast("Game loaded successfully!");
+                    } else {
+                        showToast("Invalid save data");
+                    }
+                } else {
+                    showToast("No saved game found");
+                }
+            } catch (e) {
+                showToast("Error loading game: " + e.message);
+            }
+        }
+        
+        // Reset game state
+        function resetGame() {
+            if (confirm("Are you sure you want to reset your game? All progress will be lost!")) {
+                gameState = {
+                    username: "Player",
+                    level: 1,
+                    totalXP: 0,
+                    currentXP: 0,
+                    nextLevelXP: 100,
+                    rank: "Newbie",
+                    tapPower: 1,
+                    autoXP: 0,
+                    gear: [],
+                    trainers: [],
+                    achievements: {},
+                    taps: 0
+                };
+                
+                localStorage.removeItem('muscleTycoonSave');
+                
+                recalculateTapPower();
+                recalculateAutoXP();
+                updateXPDisplays();
+                updateStoreUI();
+                updateTrainersUI();
+                updateLeaderboard();
+                updateProfile();
+                updateAchievements();
+                
+                showToast("Game reset successfully!");
+            }
+        }
+        
+        let lastSaveTime = Date.now();
+        
+        // Initialize the game
+        function initGame() {
+            // Set up tab visibility detection
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            handleVisibilityChange(); // Initialize
+            
+            // Set up save/load buttons
+            document.getElementById('saveBtn').addEventListener('click', saveGame);
+            document.getElementById('loadBtn').addEventListener('click', loadGame);
+            document.getElementById('resetBtn').addEventListener('click', resetGame);
+            
+            // Set up tap button
+            document.getElementById('tap-btn').addEventListener('click', gainXP);
+            
+            // Set up auto XP
+            autoXpInterval = setInterval(autoGainXP, 1000);
+            
+            // Try to load saved game
+            loadGame();
+            
+            // Initialize displays
+            updateXPDisplays();
+            updateStoreUI();
+            updateTrainersUI();
+            updateLeaderboard();
+            updateProfile();
+            updateAchievements();
+            
+            // Save every 30 seconds as backup
+            setInterval(saveGame, 30000);
+        }
+        
+        // Start the game when page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
